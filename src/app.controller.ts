@@ -1,13 +1,29 @@
 import { Controller, Get } from '@nestjs/common';
+import {
+  HealthCheck,
+  HealthCheckResult,
+  HealthCheckService,
+  MongooseHealthIndicator,
+} from '@nestjs/terminus';
 
 import { AppService } from './app.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(
+    private health: HealthCheckService,
+    private mongoose: MongooseHealthIndicator,
+    private readonly appService: AppService,
+  ) {}
 
   @Get()
   getHello(): string {
     return this.appService.getHello();
+  }
+
+  @Get('/health')
+  @HealthCheck({ swaggerDocumentation: false })
+  check(): Promise<HealthCheckResult> {
+    return this.health.check([() => this.mongoose.pingCheck('mongoose')]);
   }
 }
