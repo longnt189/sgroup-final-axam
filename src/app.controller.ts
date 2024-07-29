@@ -22,7 +22,7 @@ export class AppController {
   }
 
   @Get('/health')
-  @HealthCheck({ swaggerDocumentation: false })
+  @HealthCheck()
   check(): Promise<HealthCheckResult> {
     return this.health.check([() => this.mongoose.pingCheck('mongoose')]);
   }
